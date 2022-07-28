@@ -1,46 +1,89 @@
 import React from "react";
+import "./App.css";
+import Data from "./Data";
+import { connect } from "react-redux";
+import { action, arrayActioon, objectAction } from "./store/action";
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: "" };
-    this.state = { array: [] };
-    this.state = { object: {} };
+    this.state = {
+      value: "",
+      array: [1, 2, 3],
+      object: { name: "Sohaib" },
+      data: false,
+    };
+
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleChange = (event) => {
     this.setState({ value: event.target.value });
     this.setState((x) => ({
-      array: [event.target.value],
+      array: [...x.array, event.target.value],
+    }));
+    this.setState((x) => ({
+      object: { ...x.object, name: event.target.value },
     }));
   };
-  componentDidMount() {
-    console.log("Hello I am Component did mount");
-  }
-
-  handleSubmit(event) {
+  // componentWillUnmount() {
+  //   console.log(
+  //     "🚀 ~ file: App.js ~ line 21 ~ App ~ componentWillUnmount ~ componentWillUnmount"
+  //   );
+  // }
+  // componentDidMount() {
+  //   console.log("Hello I am Component did mount");
+  // }
+  componentDidUpdate(preProp, preState) {
+    // console.log(
+    //   "🚀 ~ file: App.js ~ line 25 ~ App ~ componentDidUpdate ~ componentDidUpdate",
+    //   preState.data
+    // );
     console.log(
-      "🚀 ~ file: App.js ~ line 19 ~ App ~ handleSubmit ~ event",
-      this.state.array
+      "🚀 ~ file: App.js ~ line 20 ~ App ~ componentDidUpdate ~ preState",
+      preState.object
     );
-    alert("A name was submitted: " + this.state.value);
+  }
+  dataToggle() {
+    this.setState((x) => ({ data: !x.data }));
+  }
+  handleSubmit(event) {
+    // alert("A name was submitted: " + this.state.object);
     event.preventDefault();
   }
+
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Name:
-          <input
-            type="text"
-            value={this.state.value}
-            onChange={this.handleChange}
-          />
-        </label>
-        {console.log("Component Re-render")}
-        <input type="submit" value="Submit"></input>
-      </form>
+      <div className="App">
+        {" "}
+        <form onSubmit={this.handleSubmit.bind(this)}>
+          <label>
+            Name:
+            <input
+              type="text"
+              value={this.state.value}
+              onChange={this.handleChange}
+            />
+          </label>
+
+          <input type="submit" value="Submit"></input>
+          {console.log("this.props", this.props)}
+          <button
+            onClick={() => {
+              this.props.action(true);
+              this.props.arrayActioon(this.state.array);
+              this.props.objectAction(this.state.object);
+            }}
+          >
+            Data Toogle
+          </button>
+          {<Data data={this.state} />}
+        </form>
+      </div>
     );
   }
 }
-export default App;
+const mapStateToProps = (state) => {
+  return state;
+};
+
+const mapDispatchToProps = { action, arrayActioon, objectAction };
+export default connect(mapStateToProps, mapDispatchToProps)(App);
